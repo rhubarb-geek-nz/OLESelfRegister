@@ -129,32 +129,18 @@ EXIT %ERRORLEVEL%
 	}
 } | Format-Table -Property Architecture, Executable, Machine, FileVersion, ProductVersion, FileDescription
 
-$null = New-Item -Path '.' -Name 'base' -ItemType 'directory'
+if (Test-Path -LiteralPath 'package.zip')
+{
+	Remove-Item -LiteralPath 'package.zip'
+}
+
+Push-Location 'bin'
 
 try
 {
-	$null = New-Item -Path 'base' -Name 'runtimes' -ItemType 'directory'
-
-	foreach ($ARCH in $ARCHLIST)
-	{
-
-		$null = New-Item -Path 'base\runtimes' -Name "win-$ARCH" -ItemType 'directory'
-
-		$null = New-Item -Path "base\runtimes\win-$ARCH" -Name 'native' -ItemType 'directory'
-
-		Copy-Item "bin\$ARCH\displib.dll" "base\runtimes\win-$ARCH\native\displib.dll"
-	}
-
-	Copy-Item 'README.md' 'base\README.md'
-
-	& nuget pack 'displib\displib.nuspec' -BasePath 'base'
-
-	If ( $LastExitCode -ne 0 )
-	{
-		Exit $LastExitCode
-	}
+	Compress-Archive -LiteralPath $ARCHLIST -DestinationPath '..\package.zip'
 }
 finally
 {
-	Remove-Item 'base' -Recurse
+	Pop-Location
 }

@@ -3,6 +3,7 @@
  * Licensed under the MIT License.
  ****/
 
+#include <windows.h>
 #include <displib.h>
 
 static LONG globalUsage;
@@ -23,7 +24,7 @@ typedef struct CHelloWorldData
 static STDMETHODIMP CHelloWorld_IUnknown_QueryInterface(IUnknown* pThis, REFIID riid, void** ppvObject)
 {
 	HRESULT hr = E_NOINTERFACE;
-	CHelloWorldData* pData = GetBaseObjectPtr(CHelloWorldData,IUnknown,pThis);
+	CHelloWorldData* pData = GetBaseObjectPtr(CHelloWorldData, IUnknown, pThis);
 
 	if (IsEqualIID(riid, &IID_IDispatch) || IsEqualIID(riid, &IID_IHelloWorld))
 	{
@@ -52,13 +53,13 @@ static STDMETHODIMP CHelloWorld_IUnknown_QueryInterface(IUnknown* pThis, REFIID 
 	return hr;
 }
 
-static STDMETHODIMP_(ULONG) CHelloWorld_IUnknown_AddRef(IUnknown * pThis)
+static STDMETHODIMP_(ULONG) CHelloWorld_IUnknown_AddRef(IUnknown* pThis)
 {
 	CHelloWorldData* pData = GetBaseObjectPtr(CHelloWorldData, IUnknown, pThis);
 	return InterlockedIncrement(&pData->lUsage);
 }
 
-static STDMETHODIMP_(ULONG) CHelloWorld_IUnknown_Release(IUnknown * pThis)
+static STDMETHODIMP_(ULONG) CHelloWorld_IUnknown_Release(IUnknown* pThis)
 {
 	CHelloWorldData* pData = GetBaseObjectPtr(CHelloWorldData, IUnknown, pThis);
 	LONG res = InterlockedDecrement(&pData->lUsage);
@@ -133,7 +134,7 @@ static STDMETHODIMP CHelloWorld_IHelloWorld_Invoke(IHelloWorld* pThis, DISPID di
 
 static STDMETHODIMP CHelloWorld_IHelloWorld_GetMessage(IHelloWorld* pThis, int Hint, BSTR* lpMessage)
 {
-	*lpMessage = SysAllocString(Hint < 0 ? L"Goodbye, Cruel World" :  L"Hello World");
+	*lpMessage = SysAllocString(Hint < 0 ? L"Goodbye, Cruel World" : L"Hello World");
 
 	return S_OK;
 }
@@ -281,6 +282,119 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void** ppvObject)
 STDAPI DllCanUnloadNow(void)
 {
 	return globalUsage ? S_FALSE : S_OK;
+}
+
+static const wchar_t* const registry_keys[] = {
+	L"SOFTWARE\\Classes\\CLSID\\{74067A54-5BAF-4CD0-BF21-DB6A9EFA6CA7}",
+	L"SOFTWARE\\Classes\\CLSID\\{74067A54-5BAF-4CD0-BF21-DB6A9EFA6CA7}\\InprocServer32",
+	L"SOFTWARE\\Classes\\RhubarbGeekNz.HelloWorld",
+	L"SOFTWARE\\Classes\\RhubarbGeekNz.HelloWorld\\CLSID"
+};
+
+STDAPI DllRegisterServer(void)
+{
+	DWORD disposition = 0;
+	HKEY hKey = 0;
+	HRESULT hr = S_OK;
+	LSTATUS status = RegCreateKeyExW(
+		HKEY_LOCAL_MACHINE,
+		registry_keys[1],
+		0,
+		NULL,
+		REG_OPTION_NON_VOLATILE,
+		KEY_SET_VALUE,
+		NULL,
+		&hKey,
+		&disposition);
+
+	if (status == 0)
+	{
+		status = RegSetKeyValueW(hKey, NULL, NULL, REG_SZ, globalModuleFileName, (DWORD)((1 + wcslen(globalModuleFileName)) * sizeof(globalModuleFileName[0])));
+
+		if (status == 0)
+		{
+			status = RegSetKeyValueW(hKey, NULL, L"ThreadingModel", REG_SZ, L"Both", 10);
+
+			if (status == 0)
+			{
+				ITypeLib* piTypeLib = NULL;
+
+				hr = LoadTypeLibEx(globalModuleFileName, REGKIND_REGISTER, &piTypeLib);
+
+				if (hr >= 0)
+				{
+					ITypeLib_Release(piTypeLib);
+				}
+			}
+		}
+
+		RegCloseKey(hKey);
+	}
+
+	if (status == 0 && hr >= 0)
+	{
+		status = RegCreateKeyExW(
+			HKEY_LOCAL_MACHINE,
+			registry_keys[3],
+			0,
+			NULL,
+			REG_OPTION_NON_VOLATILE,
+			KEY_SET_VALUE,
+			NULL,
+			&hKey,
+			&disposition);
+
+		if (status == 0)
+		{
+			const wchar_t* value = L"{74067A54-5BAF-4CD0-BF21-DB6A9EFA6CA7}";
+			status = RegSetKeyValueW(hKey, NULL, NULL, REG_SZ, value, (DWORD)((1 + wcslen(value)) * sizeof(value[0])));
+
+			RegCloseKey(hKey);
+		}
+	}
+
+	return (hr == S_OK && status) ? HRESULT_FROM_WIN32(status) : hr;
+}
+
+STDAPI DllUnregisterServer(void)
+{
+	ITypeLib* piTypeLib = NULL;
+	HRESULT hr = LoadTypeLibEx(globalModuleFileName, REGKIND_NONE, &piTypeLib);
+
+	if (hr >= 0)
+	{
+		TLIBATTR* attr = NULL;
+
+		hr = ITypeLib_GetLibAttr(piTypeLib, &attr);
+
+		if (hr >= 0)
+		{
+			hr = UnRegisterTypeLib(&(attr->guid), attr->wMajorVerNum, attr->wMinorVerNum, attr->lcid, attr->syskind);
+
+			ITypeLib_ReleaseTLibAttr(piTypeLib, attr);
+		}
+
+		ITypeLib_Release(piTypeLib);
+	}
+
+	if (hr >= 0)
+	{
+		int i = sizeof(registry_keys) / sizeof(registry_keys[0]);
+
+		while (i--)
+		{
+			LSTATUS status = RegDeleteKeyW(HKEY_LOCAL_MACHINE, registry_keys[i]);
+
+			if (status)
+			{
+				hr = HRESULT_FROM_WIN32(status);
+
+				break;
+			}
+		}
+	}
+
+	return hr;
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,

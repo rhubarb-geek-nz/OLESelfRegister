@@ -11,10 +11,8 @@ clean:
 	if exist $(OBJDIR) rmdir /q /s $(OBJDIR)
 	if exist $(BINDIR) rmdir /q /s $(BINDIR)
 
-$(BINDIR)\$(APPNAME).exe: $(OBJDIR)\$(APPNAME).obj $(OBJDIR)\$(APPNAME).res $(BINDIR) $(APPNAME).manifest
-	cl /Fe$@ /MT $(OBJDIR)\$(APPNAME).obj $(OBJDIR)\$(APPNAME).res ole32.lib oleaut32.lib /link /INCREMENTAL:NO /PDB:NONE /SUBSYSTEM:CONSOLE /MANIFEST
-	mt -manifest $(APPNAME).manifest $@.manifest -outputresource:$@;#1
-	del $@.manifest
+$(BINDIR)\$(APPNAME).exe: $(OBJDIR)\$(APPNAME).obj $(OBJDIR)\$(APPNAME).res $(BINDIR)
+	cl /Fe$@ /MT $(OBJDIR)\$(APPNAME).obj $(OBJDIR)\$(APPNAME).res ole32.lib oleaut32.lib /link /INCREMENTAL:NO /PDB:NONE /SUBSYSTEM:CONSOLE
 	if not "$(CertificateThumbprint)"=="" signtool sign /a /sha1 $(CertificateThumbprint) /fd SHA256 /t http://timestamp.digicert.com $@
 
 $(OBJDIR)\$(APPNAME).obj: $(APPNAME).cpp $(OBJDIR)

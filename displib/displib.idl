@@ -18,12 +18,14 @@ interface IHelloWorld : IDispatch
 }
 
 [
-	uuid(c739a43b-0300-4c57-9300-00e4fc59c40f)
+	uuid(40d40249-e837-40ef-afd2-e73564dec352),
+	helpstring("OLESelfRegister Hello World Component 1.0 Type Library"), 
+	version(1.0)
 ]
 library RhubarbGeekNzDispLib
 {
 	importlib("stdole32.tlb");
-	[uuid(49ef0168-2765-4932-be4c-e21e0d7a554f),helpstring("CHelloWorld class")]
+	[uuid(74067a54-5baf-4cd0-bf21-db6a9efa6ca7),helpstring("CHelloWorld class")]
 	coclass CHelloWorld
 	{
 		[default] interface IHelloWorld;
