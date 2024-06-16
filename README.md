@@ -11,3 +11,7 @@ Demonstration of OLESelfRegister COM object.
 [dispnet.cs](dispnet/dispnet.cs) demonstrates using [System.Activator.CreateInstance](https://learn.microsoft.com/en-us/dotnet/api/system.activator.createinstance) to create the instance.
 
 [package.ps1](package.ps1) is used to automate the building of multiple architectures.
+
+[dispvb.vb](dispvb/dispvb.vb) shows Hello World usage in Visual Basic
+
+[dispps1](dispps1/dispps1.ps1) PowerShell invoking creating and invoking Hello World
