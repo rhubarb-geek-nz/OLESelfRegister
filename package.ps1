@@ -129,16 +129,20 @@ EXIT %ERRORLEVEL%
 	}
 } | Format-Table -Property Architecture, Executable, Machine, FileVersion, ProductVersion, FileDescription
 
-if (Test-Path -LiteralPath 'package.zip')
+$Version = (Get-Item bin\x64\displib.dll).VersionInfo.ProductVersion
+$PackageId = 'rhubarb-geek-nz.OLESelfRegister'
+$PackageZip = "$PackageId.$Version.zip"
+
+if (Test-Path -LiteralPath $PackageZip)
 {
-	Remove-Item -LiteralPath 'package.zip'
+	Remove-Item -LiteralPath $PackageZip
 }
 
 Push-Location 'bin'
 
 try
 {
-	Compress-Archive -LiteralPath $ARCHLIST -DestinationPath '..\package.zip'
+	Compress-Archive -LiteralPath $ARCHLIST -DestinationPath "..\$PackageZip"
 }
 finally
 {

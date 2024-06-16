@@ -5,7 +5,7 @@ BINDIR=bin\$(VSCMD_ARG_TGT_ARCH)
 APPNAME=dispapp
 DLLNAME=displib
 
-all: $(BINDIR) $(BINDIR)\$(APPNAME).exe $(BINDIR)\$(DLLNAME).dll
+all: $(BINDIR) $(BINDIR)\$(DLLNAME).dll $(BINDIR)\$(APPNAME).exe
 
 clean:
 	if exist $(BINDIR) rmdir /q /s $(BINDIR)
