@@ -28,7 +28,7 @@ static STDMETHODIMP CHelloWorld_IUnknown_QueryInterface(IUnknown* pThis, REFIID 
 
 	if (IsEqualIID(riid, &IID_IDispatch) || IsEqualIID(riid, &IID_IHelloWorld))
 	{
-		InterlockedIncrement(&pData->lUsage);
+		IUnknown_AddRef(pData->lpOuter);
 
 		*ppvObject = &(pData->IHelloWorld);
 
