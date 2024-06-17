@@ -12,6 +12,6 @@ Demonstration of OLESelfRegister COM object.
 
 [package.ps1](package.ps1) is used to automate the building of multiple architectures.
 
-[dispvb.vb](dispvb/dispvb.vb) shows Hello World usage in Visual Basic
+[dispvbn.vb](dispvbn/dispvbn.vb) shows Hello World usage in Visual Basic
 
 [dispps1.ps1](dispps1/dispps1.ps1) PowerShell creating and invoking Hello World

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <RootNamespace>dispbas</RootNamespace>
-    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>dispvbn</RootNamespace>
+    <TargetFramework>net6.0-windows</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
