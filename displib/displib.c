@@ -17,6 +17,7 @@ typedef struct CHelloWorldData
 	LONG lUsage;
 	IUnknown* lpOuter;
 	ITypeInfo* piTypeInfo;
+	IUnknown* punkMarshal;
 } CHelloWorldData;
 
 #define GetBaseObjectPtr(x,y,z)     (x *)(((char *)(void *)z)-(size_t)(char *)(&(((x*)NULL)->y)))
@@ -46,7 +47,14 @@ static STDMETHODIMP CHelloWorld_IUnknown_QueryInterface(IUnknown* pThis, REFIID 
 		}
 		else
 		{
-			*ppvObject = NULL;
+			if (pData->punkMarshal && IsEqualIID(riid, &IID_IMarshal))
+			{
+				hr = IUnknown_QueryInterface(pData->punkMarshal, riid, ppvObject);
+			}
+			else
+			{
+				*ppvObject = NULL;
+			}
 		}
 	}
 
@@ -194,7 +202,7 @@ static STDMETHODIMP CClassObject_CHelloWorld_IClassFactory_CreateInstance(IClass
 
 		hr = LoadTypeLibEx(globalModuleFileName, REGKIND_NONE, &piTypeLib);
 
-		if (hr >= 0)
+		if (SUCCEEDED(hr))
 		{
 			CHelloWorldData* pData = LocalAlloc(LMEM_ZEROINIT, sizeof(*pData));
 
@@ -211,7 +219,7 @@ static STDMETHODIMP CClassObject_CHelloWorld_IClassFactory_CreateInstance(IClass
 
 				hr = ITypeLib_GetTypeInfoOfGuid(piTypeLib, &IID_IHelloWorld, &pData->piTypeInfo);
 
-				if (hr >= 0)
+				if (SUCCEEDED(hr))
 				{
 					if (punk)
 					{
@@ -221,7 +229,12 @@ static STDMETHODIMP CClassObject_CHelloWorld_IClassFactory_CreateInstance(IClass
 					}
 					else
 					{
-						hr = IUnknown_QueryInterface(p, riid, ppvObject);
+						hr = CoCreateFreeThreadedMarshaler(p, &pData->punkMarshal);
+
+						if (SUCCEEDED(hr))
+						{
+							hr = IUnknown_QueryInterface(p, riid, ppvObject);
+						}
 
 						IUnknown_Release(p);
 					}
@@ -287,8 +300,8 @@ STDAPI DllCanUnloadNow(void)
 static const wchar_t* const registry_keys[] = {
 	L"SOFTWARE\\Classes\\CLSID\\{74067A54-5BAF-4CD0-BF21-DB6A9EFA6CA7}",
 	L"SOFTWARE\\Classes\\CLSID\\{74067A54-5BAF-4CD0-BF21-DB6A9EFA6CA7}\\InprocServer32",
-	L"SOFTWARE\\Classes\\RhubarbGeekNz.HelloWorld",
-	L"SOFTWARE\\Classes\\RhubarbGeekNz.HelloWorld\\CLSID"
+	L"SOFTWARE\\Classes\\RhubarbGeekNz.OLESelfRegister",
+	L"SOFTWARE\\Classes\\RhubarbGeekNz.OLESelfRegister\\CLSID"
 };
 
 STDAPI DllRegisterServer(void)
@@ -321,7 +334,7 @@ STDAPI DllRegisterServer(void)
 
 				hr = LoadTypeLibEx(globalModuleFileName, REGKIND_REGISTER, &piTypeLib);
 
-				if (hr >= 0)
+				if (SUCCEEDED(hr))
 				{
 					ITypeLib_Release(piTypeLib);
 				}
@@ -331,7 +344,7 @@ STDAPI DllRegisterServer(void)
 		RegCloseKey(hKey);
 	}
 
-	if (status == 0 && hr >= 0)
+	if (status == 0 && SUCCEEDED(hr))
 	{
 		status = RegCreateKeyExW(
 			HKEY_LOCAL_MACHINE,
@@ -353,7 +366,7 @@ STDAPI DllRegisterServer(void)
 		}
 	}
 
-	return (hr == S_OK && status) ? HRESULT_FROM_WIN32(status) : hr;
+	return (SUCCEEDED(hr) && status) ? HRESULT_FROM_WIN32(status) : hr;
 }
 
 STDAPI DllUnregisterServer(void)
@@ -361,13 +374,13 @@ STDAPI DllUnregisterServer(void)
 	ITypeLib* piTypeLib = NULL;
 	HRESULT hr = LoadTypeLibEx(globalModuleFileName, REGKIND_NONE, &piTypeLib);
 
-	if (hr >= 0)
+	if (SUCCEEDED(hr))
 	{
 		TLIBATTR* attr = NULL;
 
 		hr = ITypeLib_GetLibAttr(piTypeLib, &attr);
 
-		if (hr >= 0)
+		if (SUCCEEDED(hr))
 		{
 			hr = UnRegisterTypeLib(&(attr->guid), attr->wMajorVerNum, attr->wMinorVerNum, attr->lcid, attr->syskind);
 
@@ -377,7 +390,7 @@ STDAPI DllUnregisterServer(void)
 		ITypeLib_Release(piTypeLib);
 	}
 
-	if (hr >= 0)
+	if (SUCCEEDED(hr))
 	{
 		int i = sizeof(registry_keys) / sizeof(registry_keys[0]);
 

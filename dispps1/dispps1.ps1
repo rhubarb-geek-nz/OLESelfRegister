@@ -1,6 +1,6 @@
 # Copyright (c) 2024 Roger Brown.
 # Licensed under the MIT License.
 
-$ErrorActionPreference = 'Stop'
+param($ProgID = 'RhubarbGeekNz.OLESelfRegister', $Method = 'GetMessage', $Hint = 1)
 
-[System.Activator]::CreateInstance([Type]::GetTypeFromProgID('RhubarbGeekNz.HelloWorld')).GetMessage(1)
+[System.Activator]::CreateInstance([Type]::GetTypeFromProgID($ProgID)).$Method($Hint)

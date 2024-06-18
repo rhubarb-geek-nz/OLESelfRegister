@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  ****/
 
-using RhubarbGeekNzDispLib;
+using RhubarbGeekNzOLESelfRegister;
 using System;
 
 namespace dispnet
@@ -12,7 +12,7 @@ namespace dispnet
     {
         static void Main(string[] args)
         {
-            IHelloWorld helloWorld = Activator.CreateInstance(Type.GetTypeFromProgID("RhubarbGeekNz.HelloWorld")) as IHelloWorld;
+            IHelloWorld helloWorld = Activator.CreateInstance(Type.GetTypeFromProgID("RhubarbGeekNz.OLESelfRegister")) as IHelloWorld;
 
             Console.WriteLine($"{helloWorld.GetMessage(1)}");
         }

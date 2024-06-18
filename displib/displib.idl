@@ -7,7 +7,7 @@ import "oaidl.idl";
 
 [
 	object,
-	uuid(58fb54de-ae65-4676-8171-4ec1eceb1d9d),
+	uuid(c3fa3a74-a607-4622-bf43-3f3d88826c41),
 	oleautomation,
 	dual,
 	helpstring("interface IHelloWorld")
@@ -22,7 +22,7 @@ interface IHelloWorld : IDispatch
 	helpstring("OLESelfRegister Hello World Component 1.0 Type Library"), 
 	version(1.0)
 ]
-library RhubarbGeekNzDispLib
+library RhubarbGeekNzOLESelfRegister
 {
 	importlib("stdole32.tlb");
 	[uuid(74067a54-5baf-4cd0-bf21-db6a9efa6ca7),helpstring("CHelloWorld class")]
