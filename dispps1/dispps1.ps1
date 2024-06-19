@@ -3,4 +3,4 @@
 
 param($ProgID = 'RhubarbGeekNz.OLESelfRegister', $Method = 'GetMessage', $Hint = 1)
 
-[System.Activator]::CreateInstance([Type]::GetTypeFromProgID($ProgID)).$Method($Hint)
+(New-Object -ComObject $ProgID).$Method($Hint)

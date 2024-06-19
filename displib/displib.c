@@ -308,7 +308,6 @@ STDAPI DllRegisterServer(void)
 {
 	DWORD disposition = 0;
 	HKEY hKey = 0;
-	HRESULT hr = S_OK;
 	LSTATUS status = RegCreateKeyExW(
 		HKEY_LOCAL_MACHINE,
 		registry_keys[1],
@@ -327,24 +326,12 @@ STDAPI DllRegisterServer(void)
 		if (status == 0)
 		{
 			status = RegSetKeyValueW(hKey, NULL, L"ThreadingModel", REG_SZ, L"Both", 10);
-
-			if (status == 0)
-			{
-				ITypeLib* piTypeLib = NULL;
-
-				hr = LoadTypeLibEx(globalModuleFileName, REGKIND_REGISTER, &piTypeLib);
-
-				if (SUCCEEDED(hr))
-				{
-					ITypeLib_Release(piTypeLib);
-				}
-			}
 		}
 
 		RegCloseKey(hKey);
 	}
 
-	if (status == 0 && SUCCEEDED(hr))
+	if (status == 0)
 	{
 		status = RegCreateKeyExW(
 			HKEY_LOCAL_MACHINE,
@@ -366,44 +353,24 @@ STDAPI DllRegisterServer(void)
 		}
 	}
 
-	return (SUCCEEDED(hr) && status) ? HRESULT_FROM_WIN32(status) : hr;
+	return status ? HRESULT_FROM_WIN32(status) : S_OK;
 }
 
 STDAPI DllUnregisterServer(void)
 {
-	ITypeLib* piTypeLib = NULL;
-	HRESULT hr = LoadTypeLibEx(globalModuleFileName, REGKIND_NONE, &piTypeLib);
+	HRESULT hr = S_OK;
 
-	if (SUCCEEDED(hr))
+	int i = sizeof(registry_keys) / sizeof(registry_keys[0]);
+
+	while (i--)
 	{
-		TLIBATTR* attr = NULL;
+		LSTATUS status = RegDeleteKeyW(HKEY_LOCAL_MACHINE, registry_keys[i]);
 
-		hr = ITypeLib_GetLibAttr(piTypeLib, &attr);
-
-		if (SUCCEEDED(hr))
+		if (status)
 		{
-			hr = UnRegisterTypeLib(&(attr->guid), attr->wMajorVerNum, attr->wMinorVerNum, attr->lcid, attr->syskind);
+			hr = HRESULT_FROM_WIN32(status);
 
-			ITypeLib_ReleaseTLibAttr(piTypeLib, attr);
-		}
-
-		ITypeLib_Release(piTypeLib);
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		int i = sizeof(registry_keys) / sizeof(registry_keys[0]);
-
-		while (i--)
-		{
-			LSTATUS status = RegDeleteKeyW(HKEY_LOCAL_MACHINE, registry_keys[i]);
-
-			if (status)
-			{
-				hr = HRESULT_FROM_WIN32(status);
-
-				break;
-			}
+			break;
 		}
 	}
 

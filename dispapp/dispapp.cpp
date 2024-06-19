@@ -18,17 +18,19 @@ int main(int argc, char** argv)
 		REFCLSID clsid = CLSID_CHelloWorld;
 		BSTR libName = SysAllocString(L"DISPLIB.DLL");
 		HINSTANCE hModule = CoLoadLibrary(libName, TRUE);
+		LPFNGETCLASSOBJECT pfn = (LPFNGETCLASSOBJECT)GetProcAddress(hModule, "DllGetClassObject");
 		IUnknown* classObject = NULL;
 		DWORD dwRegister = 0;
+
 		SysFreeString(libName);
-		LPFNGETCLASSOBJECT pfn = (LPFNGETCLASSOBJECT)GetProcAddress(hModule, "DllGetClassObject");
+
 		hr = pfn(clsid, IID_IUnknown, (void**)&classObject);
+
 		if (SUCCEEDED(hr))
 		{
 			hr = CoRegisterClassObject(clsid, classObject, CLSCTX_INPROC_SERVER, REGCLS_MULTIPLEUSE, &dwRegister);
 			classObject->Release();
 		}
-
 #else
 		BSTR app = SysAllocString(L"RhubarbGeekNz.OLESelfRegister");
 		CLSID clsid;

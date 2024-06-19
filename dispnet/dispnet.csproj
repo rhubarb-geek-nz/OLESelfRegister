@@ -6,15 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <COMReference Include="RhubarbGeekNzOLESelfRegister">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>1</VersionMajor>
-      <Guid>40d40249-e837-40ef-afd2-e73564dec352</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
+    <PackageReference Include="rhubarb-geek-nz.OLESelfRegister" Version="1.0.3" />
   </ItemGroup>
 
 </Project>

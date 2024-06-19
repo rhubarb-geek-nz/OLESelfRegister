@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  ****/
 
-using RhubarbGeekNzOLESelfRegister;
+using RhubarbGeekNz.OLESelfRegister;
 using System;
 
 namespace dispnet
