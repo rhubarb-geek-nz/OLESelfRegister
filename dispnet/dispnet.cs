@@ -3,10 +3,9 @@
  * Licensed under the MIT License.
  ****/
 
-using RhubarbGeekNz.OLESelfRegister;
 using System;
 
-namespace dispnet
+namespace RhubarbGeekNz.OLESelfRegister
 {
     internal class Program
     {
