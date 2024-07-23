@@ -5,13 +5,13 @@
 
 using System;
 
-namespace RhubarbGeekNz.OLESelfRegister
+namespace RhubarbGeekNzOLESelfRegister
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            IHelloWorld helloWorld = Activator.CreateInstance(Type.GetTypeFromProgID("RhubarbGeekNz.OLESelfRegister")) as IHelloWorld;
+            IHelloWorld helloWorld = Activator.CreateInstance(Type.GetTypeFromProgID("RhubarbGeekNz.OLESelfRegister", true)) as IHelloWorld;
 
             Console.WriteLine($"{helloWorld.GetMessage(1)}");
         }

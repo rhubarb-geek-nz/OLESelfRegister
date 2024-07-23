@@ -1,7 +1,7 @@
 REM Copyright (c) 2024 Roger Brown.
 REM Licensed under the MIT License.
 
-Imports RhubarbGeekNz.OLESelfRegister
+Imports RhubarbGeekNzOLESelfRegister
 
 Module Program
     Sub Main(args As String())

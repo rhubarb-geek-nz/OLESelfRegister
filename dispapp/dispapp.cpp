@@ -14,47 +14,48 @@ int main(int argc, char** argv)
 
 	if (SUCCEEDED(hr))
 	{
-		ITypeLib* typeLib;
-		hr = LoadRegTypeLib(LIBID_RhubarbGeekNzOLESelfRegister, 1, 0, 0, &typeLib);
 		if (SUCCEEDED(hr))
 		{
-			typeLib->Release();
-		}
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		BSTR app = SysAllocString(L"RhubarbGeekNz.OLESelfRegister");
-		CLSID clsid;
-
-		hr = CLSIDFromProgID(app, &clsid);
-
-		SysFreeString(app);
-
-		if (SUCCEEDED(hr))
-		{
-			IHelloWorld* helloWorld = NULL;
-
-			hr = CoCreateInstance(clsid, NULL, CLSCTX_INPROC_SERVER, IID_IHelloWorld, (void**)&helloWorld);
+			ITypeLib* typeLib;
+			hr = LoadRegTypeLib(LIBID_RhubarbGeekNzOLESelfRegister, 1, 0, 0, &typeLib);
 
 			if (SUCCEEDED(hr))
 			{
-				BSTR bstr = NULL;
+				typeLib->Release();
+			}
 
-				hr = helloWorld->GetMessage(1, &bstr);
+			BSTR app = SysAllocString(L"RhubarbGeekNz.OLESelfRegister");
+			CLSID clsid;
+
+			hr = CLSIDFromProgID(app, &clsid);
+
+			SysFreeString(app);
+
+			if (SUCCEEDED(hr))
+			{
+				IHelloWorld* helloWorld = NULL;
+
+				hr = CoCreateInstance(clsid, NULL, CLSCTX_INPROC_SERVER, IID_IHelloWorld, (void**)&helloWorld);
 
 				if (SUCCEEDED(hr))
 				{
-					printf("%S\n", bstr);
+					BSTR bstr = NULL;
 
-					SysFreeString(bstr);
+					hr = helloWorld->GetMessage(1, &bstr);
+
+					if (SUCCEEDED(hr))
+					{
+						printf("%S\n", bstr);
+
+						SysFreeString(bstr);
+					}
+
+					helloWorld->Release();
 				}
-
-				helloWorld->Release();
 			}
-		}
 
-		CoUninitialize();
+			CoUninitialize();
+		}
 	}
 
 	if (FAILED(hr))
