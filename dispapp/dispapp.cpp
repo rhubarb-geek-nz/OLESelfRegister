@@ -5,7 +5,7 @@
 
 #include<windows.h>
 #undef GetMessage
-#include <displib.h>
+#include <displib_h.h>
 #include <stdio.h>
 
 int main(int argc, char** argv)
@@ -14,31 +14,22 @@ int main(int argc, char** argv)
 
 	if (SUCCEEDED(hr))
 	{
-#ifdef _DEBUG
-		REFCLSID clsid = CLSID_CHelloWorld;
-		BSTR libName = SysAllocString(L"DISPLIB.DLL");
-		HINSTANCE hModule = CoLoadLibrary(libName, TRUE);
-		LPFNGETCLASSOBJECT pfn = (LPFNGETCLASSOBJECT)GetProcAddress(hModule, "DllGetClassObject");
-		IUnknown* classObject = NULL;
-		DWORD dwRegister = 0;
-
-		SysFreeString(libName);
-
-		hr = pfn(clsid, IID_IUnknown, (void**)&classObject);
-
+		ITypeLib* typeLib;
+		hr = LoadRegTypeLib(LIBID_RhubarbGeekNzOLESelfRegister, 1, 0, 0, &typeLib);
 		if (SUCCEEDED(hr))
 		{
-			hr = CoRegisterClassObject(clsid, classObject, CLSCTX_INPROC_SERVER, REGCLS_MULTIPLEUSE, &dwRegister);
-			classObject->Release();
+			typeLib->Release();
 		}
-#else
+	}
+
+	if (SUCCEEDED(hr))
+	{
 		BSTR app = SysAllocString(L"RhubarbGeekNz.OLESelfRegister");
 		CLSID clsid;
 
 		hr = CLSIDFromProgID(app, &clsid);
 
 		SysFreeString(app);
-#endif
 
 		if (SUCCEEDED(hr))
 		{
@@ -61,10 +52,6 @@ int main(int argc, char** argv)
 
 				helloWorld->Release();
 			}
-
-#ifdef _DEBUG
-			CoRevokeClassObject(dwRegister);
-#endif
 		}
 
 		CoUninitialize();
@@ -75,5 +62,5 @@ int main(int argc, char** argv)
 		fprintf(stderr, "0x%lx\n", (long)hr);
 	}
 
-	return hr < 0;
+	return FAILED(hr);
 }

@@ -2,8 +2,8 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>rhubarb-geek-nz.OLESelfRegister</id>
-    <version>1.0.3.0</version>
-    <title>Registration-Free COM demo</title>
+    <version>1.0.4.0</version>
+    <title>OLESelfRegister COM demo</title>
     <authors>Roger Brown</authors>
     <owners>rhubarb-geek-nz</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

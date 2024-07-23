@@ -10,7 +10,7 @@ all: $(BINDIR)\$(DLLNAME).dll
 $(OBJDIR)\$(DLLNAME).h $(OBJDIR)\$(DLLNAME)_i.c: $(OBJDIR)\$(DLLNAME).tlb
 
 $(OBJDIR)\$(DLLNAME).tlb: $(DLLNAME).idl $(OBJDIR)
-	midl $(DLLNAME).idl /client none /server none /tlb $(DLLNAME).tlb /h $(DLLNAME).h /out $(OBJDIR)
+	midl $(DLLNAME).idl /client none /server none /tlb $(DLLNAME).tlb /h $(DLLNAME)_h.h /out $(OBJDIR)
 
 clean:
 	if exist $(OBJDIR) rmdir /q /s $(OBJDIR)

@@ -4,7 +4,7 @@
  ****/
 
 #include <windows.h>
-#include <displib.h>
+#include <displib_h.h>
 
 static LONG globalUsage;
 static HMODULE globalModule;
@@ -306,6 +306,7 @@ static const wchar_t* const registry_keys[] = {
 
 STDAPI DllRegisterServer(void)
 {
+	HRESULT hr = S_OK;
 	DWORD disposition = 0;
 	HKEY hKey = 0;
 	LSTATUS status = RegCreateKeyExW(
@@ -353,7 +354,23 @@ STDAPI DllRegisterServer(void)
 		}
 	}
 
-	return status ? HRESULT_FROM_WIN32(status) : S_OK;
+	if (status)
+	{
+		hr = HRESULT_FROM_WIN32(status);
+	}
+	else
+	{
+		ITypeLib* typeLib = NULL;
+
+		hr = LoadTypeLibEx(globalModuleFileName, REGKIND_REGISTER, &typeLib);
+
+		if (SUCCEEDED(hr))
+		{
+			ITypeLib_Release(typeLib);
+		}
+	}
+
+	return hr;
 }
 
 STDAPI DllUnregisterServer(void)
@@ -371,6 +388,29 @@ STDAPI DllUnregisterServer(void)
 			hr = HRESULT_FROM_WIN32(status);
 
 			break;
+		}
+	}
+
+	if (SUCCEEDED(hr))
+	{
+		ITypeLib* typeLib = NULL;
+
+		hr = LoadTypeLibEx(globalModuleFileName, REGKIND_NONE, &typeLib);
+
+		if (SUCCEEDED(hr))
+		{
+			TLIBATTR* attr = NULL;
+
+			hr = ITypeLib_GetLibAttr(typeLib, &attr);
+
+			if (SUCCEEDED(hr))
+			{
+				hr = UnRegisterTypeLib(&attr->guid, attr->wMajorVerNum, attr->wMinorVerNum, attr->lcid, attr->syskind);
+
+				ITypeLib_ReleaseTLibAttr(typeLib, attr);
+			}
+
+			ITypeLib_Release(typeLib);
 		}
 	}
 
