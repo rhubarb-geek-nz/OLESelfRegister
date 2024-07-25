@@ -11,7 +11,7 @@ namespace RhubarbGeekNzOLESelfRegister
     {
         static void Main(string[] args)
         {
-            IHelloWorld helloWorld = Activator.CreateInstance(Type.GetTypeFromProgID("RhubarbGeekNz.OLESelfRegister", true)) as IHelloWorld;
+            IHelloWorld helloWorld = new CHelloWorld();
 
             Console.WriteLine($"{helloWorld.GetMessage(1)}");
         }
