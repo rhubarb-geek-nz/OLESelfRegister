@@ -5,8 +5,9 @@ BINDIR=bin\$(VSCMD_ARG_TGT_ARCH)
 APPNAME=dispapp
 DLLNAME=displib
 TLBNAME=disptlb
+LIBNAME=RhubarbGeekNzOLESelfRegister
 
-all: $(BINDIR) $(BINDIR)\$(DLLNAME).dll $(BINDIR)\$(TLBNAME).dll $(BINDIR)\$(APPNAME).exe
+all: $(BINDIR) $(BINDIR)\$(DLLNAME).dll $(BINDIR)\$(LIBNAME).dll $(BINDIR)\$(APPNAME).exe
 
 clean:
 	if exist $(BINDIR) rmdir /q /s $(BINDIR)
@@ -29,8 +30,8 @@ $(BINDIR)\$(APPNAME).exe: $(APPNAME)\$(BINDIR)\$(APPNAME).exe
 $(BINDIR)\$(DLLNAME).dll: $(DLLNAME)\$(BINDIR)\$(DLLNAME).dll
 	copy $(DLLNAME)\$(BINDIR)\$(DLLNAME).dll $@
 
-$(BINDIR)\$(TLBNAME).dll: $(TLBNAME)\$(BINDIR)\$(TLBNAME).dll
-	copy $(TLBNAME)\$(BINDIR)\$(TLBNAME).dll $@
+$(BINDIR)\$(LIBNAME).dll: $(TLBNAME)\$(BINDIR)\$(LIBNAME).dll
+	copy $(TLBNAME)\$(BINDIR)\$(LIBNAME).dll $@
 
 $(APPNAME)\$(BINDIR)\$(APPNAME).exe:
 	cd $(APPNAME)
@@ -42,7 +43,7 @@ $(DLLNAME)\$(BINDIR)\$(DLLNAME).dll:
 	$(MAKE) CertificateThumbprint=$(CertificateThumbprint)
 	cd ..
 
-$(TLBNAME)\$(BINDIR)\$(TLBNAME).dll:
+$(TLBNAME)\$(BINDIR)\$(LIBNAME).dll:
 	cd $(TLBNAME)
 	$(MAKE) CertificateThumbprint=$(CertificateThumbprint)
 	cd ..

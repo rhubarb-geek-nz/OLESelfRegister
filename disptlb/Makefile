@@ -3,17 +3,17 @@
 
 OBJDIR=obj\$(VSCMD_ARG_TGT_ARCH)
 BINDIR=bin\$(VSCMD_ARG_TGT_ARCH)
-DLLNAME=disptlb
+LIBNAME=RhubarbGeekNzOLESelfRegister
 TLBFILE=..\displib\$(OBJDIR)\displib.tlb
 
-all: $(BINDIR)\$(DLLNAME).dll
+all: $(BINDIR)\$(LIBNAME).dll
 
 clean:
 	if exist $(OBJDIR) rmdir /q /s $(OBJDIR)
 	if exist $(BINDIR) rmdir /q /s $(BINDIR)
 
-$(BINDIR)\$(DLLNAME).dll: $(BINDIR) $(TLBFILE)
-	tlbimp $(TLBFILE) /asmversion:1.0.5.0 /namespace:RhubarbGeekNzOLESelfRegister /machine:Agnostic /out:$@
+$(BINDIR)\$(LIBNAME).dll: $(BINDIR) $(TLBFILE)
+	tlbimp $(TLBFILE) /asmversion:1.0.6.0 /namespace:$(LIBNAME) /machine:Agnostic /out:$@
 	if not "$(CertificateThumbprint)"=="" signtool sign /a /sha1 $(CertificateThumbprint) /fd SHA256 /t http://timestamp.digicert.com $@
 
 $(BINDIR) $(OBJDIR):
