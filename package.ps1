@@ -98,9 +98,10 @@ EXIT %ERRORLEVEL%
 	}
 }
 
-$HERE = $PWD
+[string]$HERE = $PWD
+[int]$HERELEN = $HERE.Length + 1
 
-Get-ChildItem "$HERE\bin" -File -Recurse | ForEach-Object {
+Get-ChildItem "$HERE\bin", "$HERE\disptlb\bin" -File -Recurse | ForEach-Object {
 	$EXE = $_.FullName
 
 	$MACHINE = ( @"
@@ -116,7 +117,7 @@ EXIT %ERRORLEVEL%
 	$MACHINE = $MACHINE.Substring($MACHINE.LastIndexOf(' ')+1)
 
 	New-Object PSObject -Property @{
-		Executable=$EXE;
+		Executable=$EXE.SubString($HERELEN);
 		Machine=$MACHINE;
 		FileVersion=(Get-Item $EXE).VersionInfo.FileVersion;
 		ProductVersion=(Get-Item $EXE).VersionInfo.ProductVersion;
@@ -132,9 +133,9 @@ try
 
 	$Null = New-Item -Path 'base' -Name 'lib' -ItemType 'directory'
 
-	$Null = New-Item -Path 'base\lib' -Name 'netstandard2.1' -ItemType 'directory'
+	$Null = New-Item -Path 'base\lib' -Name 'netstandard2.0' -ItemType 'directory'
 
-	Copy-Item 'bin\x86\RhubarbGeekNzOLESelfRegister.dll' 'base\lib\netstandard2.1\RhubarbGeekNzOLESelfRegister.dll'
+	Copy-Item 'disptlb\bin\x86\RhubarbGeekNzOLESelfRegister.dll' 'base\lib\netstandard2.0\RhubarbGeekNzOLESelfRegister.dll'
 
 	& nuget pack 'disptlb\disptlb.nuspec' -BasePath 'base'
 
@@ -148,7 +149,7 @@ finally
 	Remove-Item 'base' -Recurse
 }
 
-$Version = (Get-Item bin\x64\displib.dll).VersionInfo.ProductVersion
+$Version = (Get-Item bin\x64\RhubarbGeekNzOLESelfRegister.dll).VersionInfo.ProductVersion
 $PackageId = 'rhubarb-geek-nz.OLESelfRegister'
 $PackageZip = "$PackageId.$Version.zip"
 

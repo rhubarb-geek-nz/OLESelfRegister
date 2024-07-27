@@ -7,7 +7,7 @@ DLLNAME=displib
 TLBNAME=disptlb
 LIBNAME=RhubarbGeekNzOLESelfRegister
 
-all: $(BINDIR) $(BINDIR)\$(DLLNAME).dll $(BINDIR)\$(LIBNAME).dll $(BINDIR)\$(APPNAME).exe
+all: $(BINDIR) $(BINDIR)\$(LIBNAME).dll $(TLBNAME)\$(BINDIR)\$(LIBNAME).dll $(BINDIR)\$(APPNAME).exe
 
 clean:
 	if exist $(BINDIR) rmdir /q /s $(BINDIR)
@@ -27,11 +27,8 @@ $(BINDIR):
 $(BINDIR)\$(APPNAME).exe: $(APPNAME)\$(BINDIR)\$(APPNAME).exe
 	copy $(APPNAME)\$(BINDIR)\$(APPNAME).exe $@
 
-$(BINDIR)\$(DLLNAME).dll: $(DLLNAME)\$(BINDIR)\$(DLLNAME).dll
+$(BINDIR)\$(LIBNAME).dll: $(DLLNAME)\$(BINDIR)\$(DLLNAME).dll
 	copy $(DLLNAME)\$(BINDIR)\$(DLLNAME).dll $@
-
-$(BINDIR)\$(LIBNAME).dll: $(TLBNAME)\$(BINDIR)\$(LIBNAME).dll
-	copy $(TLBNAME)\$(BINDIR)\$(LIBNAME).dll $@
 
 $(APPNAME)\$(BINDIR)\$(APPNAME).exe:
 	cd $(APPNAME)
