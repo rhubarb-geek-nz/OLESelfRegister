@@ -6,20 +6,8 @@
     <TargetFrameworks>net481;net6.0-windows</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net481' ">
-    <COMReference Include="RhubarbGeekNzOLESelfRegister">
-      <WrapperTool>tlbimp</WrapperTool>
-      <VersionMinor>0</VersionMinor>
-      <VersionMajor>1</VersionMajor>
-      <Guid>40d40249-e837-40ef-afd2-e73564dec352</Guid>
-      <Lcid>0</Lcid>
-      <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
-    </COMReference>
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0-windows' ">
-    <PackageReference Include="rhubarb-geek-nz.OLESelfRegister" Version="1.0.6" />
+  <ItemGroup>
+    <PackageReference Include="rhubarb-geek-nz.OLESelfRegister" Version="1.0.7" />
   </ItemGroup>
 
 </Project>
