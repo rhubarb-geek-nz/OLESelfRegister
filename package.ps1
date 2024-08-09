@@ -158,11 +158,14 @@ if (Test-Path -LiteralPath $PackageZip)
 	Remove-Item -LiteralPath $PackageZip
 }
 
+Copy-Item 'setup.ps1' 'bin'
+
 Push-Location 'bin'
 
 try
 {
-	Compress-Archive -LiteralPath $ARCHLIST -DestinationPath "..\$PackageZip"
+	$List = $ARCHLIST, 'setup.ps1' | ForEach-Object { $_ }
+	Compress-Archive -LiteralPath $List -DestinationPath "..\$PackageZip"
 }
 finally
 {
