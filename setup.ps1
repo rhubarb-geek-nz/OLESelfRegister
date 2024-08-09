@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 
-param([switch]$UnregisterServer)
+param([switch]$UnregServer)
 
 trap
 {
@@ -76,7 +76,7 @@ Add-Type -TypeDefinition @"
 	}
 "@
 
-if ($UnregisterServer)
+if ($UnregServer)
 {
 	if (Test-Path $DllPath)
 	{
