@@ -158,7 +158,7 @@ if (Test-Path -LiteralPath $PackageZip)
 	Remove-Item -LiteralPath $PackageZip
 }
 
-Copy-Item 'setup.ps1' 'bin'
+Copy-Item 'dispzip\setup.ps1' 'bin'
 
 Push-Location 'bin'
 
